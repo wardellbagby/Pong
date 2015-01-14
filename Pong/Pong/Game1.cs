@@ -87,7 +87,7 @@ namespace Pong
             // TODO: Add your drawing code here
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(defaultFont, "Pong!", new Vector2(graphics.GraphicsDevice.Viewport.Width / 2,
+            spriteBatch.DrawString(defaultFont, "Hello World!", new Vector2(graphics.GraphicsDevice.Viewport.Width / 2,
         graphics.GraphicsDevice.Viewport.Height / 2), Color.Black);
             spriteBatch.End();
 
