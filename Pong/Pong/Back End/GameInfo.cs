@@ -7,8 +7,6 @@ namespace Pong.Back_End
 {
     public class GameInfo
     {
-
-
         //Board info
         public static Object[] paddles;
         public static Object ball;
@@ -83,8 +81,6 @@ namespace Pong.Back_End
         public static void setPlayerNames(String[] newPlayerNames)
         {
             playerNames = newPlayerNames;
-        } 
-
-
+        }
     }
 }
