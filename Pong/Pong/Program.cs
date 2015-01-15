@@ -1,3 +1,4 @@
+using Pong.Front_End.ScreenManager;
 using System;
 
 namespace Pong
@@ -8,11 +9,11 @@ namespace Pong
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main(string[] args)
+        static void Main()
         {
-            using (Game1 game = new Game1())
+            using (ScreenManager manager = new ScreenManager())
             {
-                game.Run();
+                manager.Run();
             }
         }
     }
