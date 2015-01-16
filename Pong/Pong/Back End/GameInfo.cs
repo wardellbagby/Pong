@@ -7,6 +7,10 @@ namespace Pong.Back_End
 {
     public class GameInfo
     {
+        //Global Info
+        public static int gameWidth = 1366;
+        public static int gameHeight = 768;
+
         //Board info
         public static Paddle[] paddles;
         public static Ball ball;

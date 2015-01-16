@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Pong.Front_End.ScreenManager
+namespace Pong.Front_End.Managers
 {
     public class ScreenManager : Game
     {
@@ -16,15 +16,16 @@ namespace Pong.Front_End.ScreenManager
         public static Dictionary<string, Texture3D> Textures3D;
         public static Dictionary<string, SpriteFont> Fonts;
         public static Dictionary<string, Model> Models;
-        public static List<GameScreen> ScreenList;
+        public static List<Screen> ScreenList;
         public static ContentManager ContentMgr;
+        private bool toggleFullScreen;
 
         public ScreenManager()
         {
             GraphicsDeviceMgr = new GraphicsDeviceManager(this);
 
-            GraphicsDeviceMgr.PreferredBackBufferWidth = 1366;
-            GraphicsDeviceMgr.PreferredBackBufferHeight = 768;
+            GraphicsDeviceMgr.PreferredBackBufferWidth = Pong.Back_End.GameInfo.gameWidth;
+            GraphicsDeviceMgr.PreferredBackBufferHeight = Pong.Back_End.GameInfo.gameHeight;
 
             GraphicsDeviceMgr.IsFullScreen = false;
             IsMouseVisible = true;
@@ -81,6 +82,10 @@ namespace Pong.Front_End.ScreenManager
                 {
                     ScreenList[i].Update(gameTime);
                 }
+                if ((Keyboard.GetState().IsKeyDown(Keys.LeftAlt) || Keyboard.GetState().IsKeyDown(Keys.RightAlt)) && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    toggleFullScreen = true;
+                }
             }
             catch (Exception ex)
             {
@@ -94,6 +99,11 @@ namespace Pong.Front_End.ScreenManager
         }
         protected override void Draw(GameTime gameTime)
         {
+            if (toggleFullScreen)
+            {
+                GraphicsDeviceMgr.ToggleFullScreen();
+                toggleFullScreen = false;
+            }
             var startIndex = ScreenList.Count - 1;
             while (ScreenList[startIndex].IsPopup)
             {
@@ -190,26 +200,25 @@ namespace Pong.Front_End.ScreenManager
                 Models.Remove(modelName);
             }
         }
-                public static void AddScreen(GameScreen gameScreen)
+        public static void AddScreen(Screen gameScreen)
         {
-            gameScreen.LoadAssets();
             if (ScreenList == null)
             {
-                ScreenList = new List<GameScreen>();
+                ScreenList = new List<Screen>();
             }
             ScreenList.Add(gameScreen);
             gameScreen.LoadAssets();
         }
 
-        public static void RemoveScreen(GameScreen gameScreen)
+        public static void RemoveScreen(Screen gameScreen)
         {
             gameScreen.UnloadAssets();
             ScreenList.Remove(gameScreen);
-            if(ScreenList.Count < 1)
+            if (ScreenList.Count < 1)
                 AddScreen(new ErrorScreen());
         }
 
-        public static void ChangeScreens(GameScreen currentScreen, GameScreen targetScreen)
+        public static void ChangeScreens(Screen currentScreen, Screen targetScreen)
         {
             RemoveScreen(currentScreen);
             AddScreen(targetScreen);

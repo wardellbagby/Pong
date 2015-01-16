@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Manager = Pong.Front_End.ScreenManager.ScreenManager;
+using Manager = Pong.Front_End.Managers.ScreenManager;
 
 namespace Pong.Front_End.Screens
 {
-    class ErrorScreen : GameScreen
+    class ErrorScreen : Screen
     {
 
         public override void LoadAssets()
@@ -26,7 +26,7 @@ namespace Pong.Front_End.Screens
         public override void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
             Manager.Sprites.Begin();
-            Manager.Sprites.DrawString(Manager.Fonts["Default Font"], "ERROR! You shouldn't be here!", new Microsoft.Xna.Framework.Vector2(250, 250), Microsoft.Xna.Framework.Color.Black);
+            Manager.Sprites.DrawString(Manager.Fonts["Default"], "ERROR! You shouldn't be here!", new Microsoft.Xna.Framework.Vector2(250, 250), Microsoft.Xna.Framework.Color.Black);
             Manager.Sprites.End();
             base.Draw(gameTime);
         }
