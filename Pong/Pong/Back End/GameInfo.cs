@@ -68,7 +68,7 @@ namespace Pong.Back_End
 
         public static void setPlayerAmount(int newPlayerAmount)
         {
-            if (playerAmount >= 0)
+            if (newPlayerAmount >= 0)
             {
                 playerAmount = newPlayerAmount;
             }
