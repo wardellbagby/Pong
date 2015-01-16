@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Pong.Front_End.ScreenManager
+namespace Pong.Front_End.Managers
 {
     public class ScreenManager : Game
     {
@@ -23,8 +23,8 @@ namespace Pong.Front_End.ScreenManager
         {
             GraphicsDeviceMgr = new GraphicsDeviceManager(this);
 
-            GraphicsDeviceMgr.PreferredBackBufferWidth = 1366;
-            GraphicsDeviceMgr.PreferredBackBufferHeight = 768;
+            GraphicsDeviceMgr.PreferredBackBufferWidth = Pong.Back_End.GameInfo.gameWidth;
+            GraphicsDeviceMgr.PreferredBackBufferHeight = Pong.Back_End.GameInfo.gameHeight;
 
             GraphicsDeviceMgr.IsFullScreen = false;
             IsMouseVisible = true;
@@ -190,9 +190,8 @@ namespace Pong.Front_End.ScreenManager
                 Models.Remove(modelName);
             }
         }
-                public static void AddScreen(GameScreen gameScreen)
+        public static void AddScreen(GameScreen gameScreen)
         {
-            gameScreen.LoadAssets();
             if (ScreenList == null)
             {
                 ScreenList = new List<GameScreen>();
@@ -205,7 +204,7 @@ namespace Pong.Front_End.ScreenManager
         {
             gameScreen.UnloadAssets();
             ScreenList.Remove(gameScreen);
-            if(ScreenList.Count < 1)
+            if (ScreenList.Count < 1)
                 AddScreen(new ErrorScreen());
         }
 

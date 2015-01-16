@@ -73,7 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Back End\GameInfo.cs" />
-    <Compile Include="Front End\ScreenManager\ScreenManager.cs" />
+    <Compile Include="Front End\MenuItem.cs" />
+    <Compile Include="Front End\Managers\ScreenManager.cs" />
     <Compile Include="Front End\Screens\ErrorScreen.cs" />
     <Compile Include="Front End\Screens\GameScreen.cs" />
     <Compile Include="Front End\Screens\MainMenuScreen.cs" />

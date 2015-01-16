@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Manager = Pong.Front_End.ScreenManager.ScreenManager;
+using Pong.Front_End.Managers;
 
 namespace Pong.Front_End.Screens
 {
@@ -11,7 +11,7 @@ namespace Pong.Front_End.Screens
 
         public virtual void LoadAssets()
         {
-            Manager.AddFont("Default Font");
+            ScreenManager.AddFont("Default");
         }
         public virtual void Update(GameTime gameTime) { }
         public virtual void Draw(GameTime gameTime) { }
