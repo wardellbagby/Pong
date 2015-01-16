@@ -49,7 +49,7 @@ namespace Pong.Front_End
         }
 
 
-        public virtual void Draw(GameScreen screen, bool isSelected, GameTime gameTime)
+        public virtual void Draw(Screen screen, bool isSelected, GameTime gameTime)
         {
             Color color = isSelected ? selectedColor : unselectedColor;
 

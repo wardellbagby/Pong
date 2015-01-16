@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pong.Front_End.Screens
 {
-    class MainMenuScreen : GameScreen
+    class MainMenuScreen : Screen
     {
         private SpriteBatch spriteBatch;
         private List<MenuItem> menuItems = new List<MenuItem>();
@@ -90,6 +90,10 @@ namespace Pong.Front_End.Screens
                     previousButtonStates.Add(item, ButtonState.Pressed);
                 else
                     previousButtonStates[item] = ButtonState.Pressed;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.Enter) && (previousButtonStates.ContainsKey(Keys.Enter) && previousButtonStates[Keys.Enter] == ButtonState.Pressed) && selectedIndex == 0)
+            {
+                Manager.ChangeScreens(this, new GameScreen());
             }
             if (Keyboard.GetState().IsKeyUp(Keys.Down) && (previousButtonStates.ContainsKey(Keys.Down) && previousButtonStates[Keys.Down] == ButtonState.Pressed))
             {

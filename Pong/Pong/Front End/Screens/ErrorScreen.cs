@@ -8,7 +8,7 @@ using Manager = Pong.Front_End.Managers.ScreenManager;
 
 namespace Pong.Front_End.Screens
 {
-    class ErrorScreen : GameScreen
+    class ErrorScreen : Screen
     {
 
         public override void LoadAssets()

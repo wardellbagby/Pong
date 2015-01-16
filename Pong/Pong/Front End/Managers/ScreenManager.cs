@@ -16,8 +16,9 @@ namespace Pong.Front_End.Managers
         public static Dictionary<string, Texture3D> Textures3D;
         public static Dictionary<string, SpriteFont> Fonts;
         public static Dictionary<string, Model> Models;
-        public static List<GameScreen> ScreenList;
+        public static List<Screen> ScreenList;
         public static ContentManager ContentMgr;
+        private bool toggleFullScreen;
 
         public ScreenManager()
         {
@@ -81,6 +82,10 @@ namespace Pong.Front_End.Managers
                 {
                     ScreenList[i].Update(gameTime);
                 }
+                if ((Keyboard.GetState().IsKeyDown(Keys.LeftAlt) || Keyboard.GetState().IsKeyDown(Keys.RightAlt)) && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    toggleFullScreen = true;
+                }
             }
             catch (Exception ex)
             {
@@ -94,6 +99,11 @@ namespace Pong.Front_End.Managers
         }
         protected override void Draw(GameTime gameTime)
         {
+            if (toggleFullScreen)
+            {
+                GraphicsDeviceMgr.ToggleFullScreen();
+                toggleFullScreen = false;
+            }
             var startIndex = ScreenList.Count - 1;
             while (ScreenList[startIndex].IsPopup)
             {
@@ -190,17 +200,17 @@ namespace Pong.Front_End.Managers
                 Models.Remove(modelName);
             }
         }
-        public static void AddScreen(GameScreen gameScreen)
+        public static void AddScreen(Screen gameScreen)
         {
             if (ScreenList == null)
             {
-                ScreenList = new List<GameScreen>();
+                ScreenList = new List<Screen>();
             }
             ScreenList.Add(gameScreen);
             gameScreen.LoadAssets();
         }
 
-        public static void RemoveScreen(GameScreen gameScreen)
+        public static void RemoveScreen(Screen gameScreen)
         {
             gameScreen.UnloadAssets();
             ScreenList.Remove(gameScreen);
@@ -208,7 +218,7 @@ namespace Pong.Front_End.Managers
                 AddScreen(new ErrorScreen());
         }
 
-        public static void ChangeScreens(GameScreen currentScreen, GameScreen targetScreen)
+        public static void ChangeScreens(Screen currentScreen, Screen targetScreen)
         {
             RemoveScreen(currentScreen);
             AddScreen(targetScreen);
