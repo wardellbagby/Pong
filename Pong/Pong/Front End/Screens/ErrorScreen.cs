@@ -19,7 +19,6 @@ namespace Pong.Front_End.Screens
 
         public override void UnloadAssets()
         {
-
             base.UnloadAssets();
         }
 

@@ -6,54 +6,51 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Pong.Front_End.Managers
-{
-    public class ScreenManager : Game
-    {
-        public static GraphicsDeviceManager GraphicsDeviceMgr;
+namespace Pong.Front_End.Managers {
+
+    public class ScreenManager : Game {
+        public static GraphicsDeviceManager GraphicsDeviceManager;
         public static SpriteBatch Sprites;
         public static Dictionary<string, Texture2D> Textures2D;
         public static Dictionary<string, Texture3D> Textures3D;
         public static Dictionary<string, SpriteFont> Fonts;
         public static Dictionary<string, Model> Models;
         public static List<Screen> ScreenList;
-        public static ContentManager ContentMgr;
+        public static ContentManager ContentManager;
+        public static InputManager InputManager;
         private bool toggleFullScreen;
 
-        public ScreenManager()
-        {
-            GraphicsDeviceMgr = new GraphicsDeviceManager(this);
+        public ScreenManager() {
+            InputManager = new InputManager();
+            GraphicsDeviceManager = new GraphicsDeviceManager(this);
 
-            GraphicsDeviceMgr.PreferredBackBufferWidth = Pong.Back_End.GameInfo.gameWidth;
-            GraphicsDeviceMgr.PreferredBackBufferHeight = Pong.Back_End.GameInfo.gameHeight;
+            GraphicsDeviceManager.PreferredBackBufferWidth = Pong.Back_End.GameInfo.gameWidth;
+            GraphicsDeviceManager.PreferredBackBufferHeight = Pong.Back_End.GameInfo.gameHeight;
 
-            GraphicsDeviceMgr.IsFullScreen = false;
+            GraphicsDeviceManager.IsFullScreen = false;
             IsMouseVisible = true;
 
             Content.RootDirectory = "Content";
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             Textures2D = new Dictionary<string, Texture2D>();
             Textures3D = new Dictionary<string, Texture3D>();
             Models = new Dictionary<string, Model>();
             Fonts = new Dictionary<string, SpriteFont>();
+
+            InputManager.Register(Keys.Escape, () => Exit());
             base.Initialize();
         }
-        protected override void LoadContent()
-        {
-            ContentMgr = Content;
+        protected override void LoadContent() {
+            ContentManager = Content;
             Sprites = new SpriteBatch(GraphicsDevice);
-
-            // Load any full game assets here
+            AddFont("Default");
 
             AddScreen(new MainMenuScreen());
         }
-        protected override void UnloadContent()
-        {
-            foreach (var screen in ScreenList)
-            {
+        protected override void UnloadContent() {
+            foreach (var screen in ScreenList) {
                 screen.UnloadAssets();
             }
             Textures2D.Clear();
@@ -62,164 +59,114 @@ namespace Pong.Front_End.Managers
             Models.Clear();
             ScreenList.Clear();
             Content.Unload();
+            RemoveFont("Default");
         }
-        protected override void Update(GameTime gameTime)
-        {
-            try
-            {
-                // TODO Replace with an InputManager for the Screens.
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                {
-                    Exit();
-                }
+        protected override void Update(GameTime gameTime) {
+            InputManager.Update(Keyboard.GetState());
 
-                var startIndex = ScreenList.Count - 1;
-                while (ScreenList[startIndex].IsPopup && ScreenList[startIndex].IsActive)
-                {
-                    startIndex--;
-                }
-                for (var i = startIndex; i < ScreenList.Count; i++)
-                {
-                    ScreenList[i].Update(gameTime);
-                }
-                if ((Keyboard.GetState().IsKeyDown(Keys.LeftAlt) || Keyboard.GetState().IsKeyDown(Keys.RightAlt)) && Keyboard.GetState().IsKeyDown(Keys.Enter))
-                {
-                    toggleFullScreen = true;
-                }
+            var startIndex = ScreenList.Count - 1;
+            for (var i = startIndex; i < ScreenList.Count; i++) {
+                ScreenList[i].Update(gameTime);
             }
-            catch (Exception ex)
-            {
-                //TODO Do something with this... :|
-                throw ex;
+            //InputManager doesn't currently support key combos.
+            if (Keyboard.GetState().IsKeyDown(Keys.F11) || ((Keyboard.GetState().IsKeyDown(Keys.LeftAlt) || Keyboard.GetState().IsKeyDown(Keys.RightAlt)) && Keyboard.GetState().IsKeyDown(Keys.Enter))) {
+                toggleFullScreen = true;
             }
-            finally
-            {
-                base.Update(gameTime);
-            }
+            base.Update(gameTime);
+
         }
-        protected override void Draw(GameTime gameTime)
-        {
-            if (toggleFullScreen)
-            {
-                GraphicsDeviceMgr.ToggleFullScreen();
+        protected override void Draw(GameTime gameTime) {
+            if (toggleFullScreen) {
+                GraphicsDeviceManager.ToggleFullScreen();
                 toggleFullScreen = false;
             }
             var startIndex = ScreenList.Count - 1;
-            while (ScreenList[startIndex].IsPopup)
-            {
-                startIndex--;
-            }
 
             GraphicsDevice.Clear(ScreenList[startIndex].BackgroundColor);
-            GraphicsDeviceMgr.GraphicsDevice.Clear(ScreenList[startIndex].BackgroundColor);
+            GraphicsDeviceManager.GraphicsDevice.Clear(ScreenList[startIndex].BackgroundColor);
 
-            for (var i = startIndex; i < ScreenList.Count; i++)
-            {
+            for (var i = startIndex; i < ScreenList.Count; i++) {
                 ScreenList[i].Draw(gameTime);
             }
 
 
             base.Draw(gameTime);
         }
-        public static void AddFont(string fontName)
-        {
-            if (Fonts == null)
-            {
+        public static void AddFont(string fontName) {
+            if (Fonts == null) {
                 Fonts = new Dictionary<string, SpriteFont>();
             }
-            if (!Fonts.ContainsKey(fontName))
-            {
-                Fonts.Add(fontName, ContentMgr.Load<SpriteFont>(fontName));
+            if (!Fonts.ContainsKey(fontName)) {
+                Fonts.Add(fontName, ContentManager.Load<SpriteFont>(fontName));
             }
         }
 
-        public static void RemoveFont(string fontName)
-        {
-            if (Fonts.ContainsKey(fontName))
-            {
+        public static void RemoveFont(string fontName) {
+            if (Fonts.ContainsKey(fontName)) {
                 Fonts.Remove(fontName);
             }
         }
 
-        public static void AddTexture2D(string textureName)
-        {
-            if (Textures2D == null)
-            {
+        public static void AddTexture2D(string textureName) {
+            if (Textures2D == null) {
                 Textures2D = new Dictionary<string, Texture2D>();
             }
-            if (!Textures2D.ContainsKey(textureName))
-            {
-                Textures2D.Add(textureName, ContentMgr.Load<Texture2D>(textureName));
+            if (!Textures2D.ContainsKey(textureName)) {
+                Textures2D.Add(textureName, ContentManager.Load<Texture2D>(textureName));
             }
         }
 
-        public static void RemoveTexture2D(string textureName)
-        {
-            if (Textures2D.ContainsKey(textureName))
-            {
+        public static void RemoveTexture2D(string textureName) {
+            if (Textures2D.ContainsKey(textureName)) {
                 Textures2D.Remove(textureName);
             }
         }
 
-        public static void AddTexture3D(string textureName)
-        {
-            if (Textures3D == null)
-            {
+        public static void AddTexture3D(string textureName) {
+            if (Textures3D == null) {
                 Textures3D = new Dictionary<string, Texture3D>();
             }
-            if (!Textures3D.ContainsKey(textureName))
-            {
-                Textures3D.Add(textureName, ContentMgr.Load<Texture3D>(textureName));
+            if (!Textures3D.ContainsKey(textureName)) {
+                Textures3D.Add(textureName, ContentManager.Load<Texture3D>(textureName));
             }
         }
 
-        public static void RemoveTexture3D(string textureName)
-        {
-            if (Textures3D.ContainsKey(textureName))
-            {
+        public static void RemoveTexture3D(string textureName) {
+            if (Textures3D.ContainsKey(textureName)) {
                 Textures3D.Remove(textureName);
             }
         }
 
-        public static void AddModel(string modelName)
-        {
-            if (Models == null)
-            {
+        public static void AddModel(string modelName) {
+            if (Models == null) {
                 Models = new Dictionary<string, Model>();
             }
-            if (!Models.ContainsKey(modelName))
-            {
-                Models.Add(modelName, ContentMgr.Load<Model>(modelName));
+            if (!Models.ContainsKey(modelName)) {
+                Models.Add(modelName, ContentManager.Load<Model>(modelName));
             }
         }
 
-        public static void RemoveModel(string modelName)
-        {
-            if (Models.ContainsKey(modelName))
-            {
+        public static void RemoveModel(string modelName) {
+            if (Models.ContainsKey(modelName)) {
                 Models.Remove(modelName);
             }
         }
-        public static void AddScreen(Screen gameScreen)
-        {
-            if (ScreenList == null)
-            {
+        public static void AddScreen(Screen gameScreen) {
+            if (ScreenList == null) {
                 ScreenList = new List<Screen>();
             }
             ScreenList.Add(gameScreen);
             gameScreen.LoadAssets();
         }
 
-        public static void RemoveScreen(Screen gameScreen)
-        {
+        public static void RemoveScreen(Screen gameScreen) {
             gameScreen.UnloadAssets();
             ScreenList.Remove(gameScreen);
             if (ScreenList.Count < 1)
                 AddScreen(new ErrorScreen());
         }
 
-        public static void ChangeScreens(Screen currentScreen, Screen targetScreen)
-        {
+        public static void ChangeScreens(Screen currentScreen, Screen targetScreen) {
             RemoveScreen(currentScreen);
             AddScreen(targetScreen);
         }
