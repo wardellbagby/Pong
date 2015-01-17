@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pong.Back_End
 {
-    class Paddle 
+    public class Paddle 
     {
         // Paddle stats
         private int speed;

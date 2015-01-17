@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pong.Back_End
 {
-    class Board
+    public class Board
     {
         // Board stats
         private static int width;

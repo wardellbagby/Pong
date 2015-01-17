@@ -19,6 +19,7 @@ namespace Pong.Front_End.Managers {
         public static ContentManager ContentManager;
         public static InputManager InputManager;
         private bool toggleFullScreen;
+        private static string FontFolder = "Fonts";
 
         public ScreenManager() {
             InputManager = new InputManager();
@@ -97,7 +98,7 @@ namespace Pong.Front_End.Managers {
                 Fonts = new Dictionary<string, SpriteFont>();
             }
             if (!Fonts.ContainsKey(fontName)) {
-                Fonts.Add(fontName, ContentManager.Load<SpriteFont>(fontName));
+                Fonts.Add(fontName, ContentManager.Load<SpriteFont>(FontFolder + '\\' + fontName));
             }
         }
 

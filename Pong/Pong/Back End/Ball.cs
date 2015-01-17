@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pong.Back_End
 {
-    class Ball
+    public class Ball
     {
         // Ball stats
         private static int size;
