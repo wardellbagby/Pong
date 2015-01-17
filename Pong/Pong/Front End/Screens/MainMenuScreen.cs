@@ -20,10 +20,6 @@ namespace Pong.Front_End.Screens {
         }
 
         public override void LoadAssets() {
-            InputManager.Register(Keys.Down, OnDownPressed);
-            InputManager.Register(Keys.Enter, OnEnterPressed);
-            InputManager.Register(Keys.Up, OnUpPressed);
-
             spriteBatch = ScreenManager.Sprites;
             BackgroundColor = Color.Black;
             ScreenManager.AddFont("Title");
@@ -39,6 +35,13 @@ namespace Pong.Front_End.Screens {
             menuItems.Add(new MenuItem("Start", startTextPosition - (startTextSize / 2), ScreenManager.Fonts["Menu Item"]));
             menuItems.Add(new MenuItem("Options", optionsTextPosition - (optionsTextSize / 2), ScreenManager.Fonts["Menu Item"]));
             menuItems.Add(new MenuItem("About", aboutTextPosition - (aboutTextSize / 2), ScreenManager.Fonts["Menu Item"]));
+
+            InputManager.Register(Keys.Down, OnDownPressed);
+            InputManager.Register(Keys.Enter, OnEnterPressed);
+            InputManager.Register(Keys.Up, OnUpPressed);
+            foreach (MenuItem item in menuItems) {
+                InputManager.Register(MouseButtons.LeftButton, item.GetBounds(), OnEnterPressed);
+            }
             base.LoadAssets();
         }
 
@@ -46,6 +49,9 @@ namespace Pong.Front_End.Screens {
             InputManager.Unregister(Keys.Down, OnDownPressed);
             InputManager.Unregister(Keys.Enter, OnEnterPressed);
             InputManager.Unregister(Keys.Up, OnUpPressed);
+            foreach (MenuItem item in menuItems) {
+                InputManager.Unregister(MouseButtons.LeftButton, item.GetBounds(), OnEnterPressed);
+            }
 
             ScreenManager.RemoveFont("Title");
             ScreenManager.RemoveFont("Menu Item");
@@ -96,7 +102,23 @@ namespace Pong.Front_End.Screens {
             if (Mouse.GetState().RightButton == ButtonState.Pressed) {
                 ScreenManager.ChangeScreens(this, new ErrorScreen());
             }
+
+            int hitIndex = GetIndexOfHitMenuItem(Mouse.GetState());
+            if (hitIndex >= 0) {
+                selectedIndex = hitIndex;
+            }
+
             base.Update(gameTime);
+        }
+
+        private int GetIndexOfHitMenuItem(MouseState mouseState) {
+            for (int i = 0; i < menuItems.Count; i++) {
+                MenuItem item = menuItems[i];
+                if (item.GetBounds().Contains(new Point(mouseState.X, mouseState.Y))) {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }

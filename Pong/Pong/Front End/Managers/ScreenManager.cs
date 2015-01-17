@@ -63,7 +63,7 @@ namespace Pong.Front_End.Managers {
             RemoveFont("Default");
         }
         protected override void Update(GameTime gameTime) {
-            InputManager.Update(Keyboard.GetState());
+            InputManager.Update(Keyboard.GetState(), Mouse.GetState());
 
             var startIndex = ScreenList.Count - 1;
             for (var i = startIndex; i < ScreenList.Count; i++) {

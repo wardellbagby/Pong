@@ -15,10 +15,21 @@ namespace Pong.Front_End {
         private Color selectedColor;
         private Color unselectedColor;
         private SpriteFont font;
+        private Rectangle bounds;
 
         public SpriteFont Font {
             get { return font; }
-            set { font = value; }
+            set {
+                if (value == null) {
+                    throw new ArgumentNullException("Font cannot be null");
+                }
+                font = value;
+                if (position != null)
+                    bounds = new Rectangle((int)(position.X), (int)(position.Y), GetWidth(), GetHeight());
+                else {
+                    bounds = Rectangle.Empty;
+                }
+            }
         }
 
         public Color SelectedColor {
@@ -37,18 +48,33 @@ namespace Pong.Front_End {
         }
         public Vector2 Position {
             get { return position; }
-            set { position = value; }
+            set {
+                if (value == null) {
+                    throw new ArgumentNullException("Position cannot be null");
+                }
+                position = value;
+                if (font != null)
+                    bounds = new Rectangle((int)(position.X), (int)(position.Y), GetWidth(), GetHeight());
+                else {
+                    bounds = Rectangle.Empty;
+                }
+            }
         }
 
         public MenuItem(string text, Vector2 position, SpriteFont font) {
-            this.text = text;
-            this.position = position;
-            this.font = font;
+            if (position == null || font == null) {
+                throw new ArgumentNullException("Position and/or Font cannot be null.");
+            }
+            this.Text = text;
+            this.Font = font;
+            this.Position = position;
             selectedColor = Color.Gold;
             unselectedColor = Color.White;
         }
 
-
+        public Rectangle GetBounds() {
+            return bounds;
+        }
         public virtual void Draw(Screen screen, bool isSelected, GameTime gameTime) {
             Color color = isSelected ? selectedColor : unselectedColor;
 
