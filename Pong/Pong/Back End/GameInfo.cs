@@ -12,8 +12,9 @@ namespace Pong.Back_End
         public static int gameHeight = 768;
 
         //Board info
-        public static Object[] paddles;
-        public static Object ball;
+        public static Paddle[] paddles;
+        public static Ball ball;
+        public static Board board;
         public static int[] scores;
 
         //Menu Info
@@ -24,24 +25,34 @@ namespace Pong.Back_End
 
         //Methods
 
-        public static Object[] getPaddles()
+        public static Paddle[] getPaddles()
         {
             return paddles;
         }
 
-        public static void setPaddles(Object[] newPaddles)
+        public static void setPaddles(Paddle[] newPaddles)
         {
             paddles = newPaddles;
         }
 
-        public static Object getBall()
+        public static Ball getBall()
         {
             return ball;
         }
 
-        public static void setBall(Object newBall)
+        public static void setBall(Ball newBall)
         {
             ball = newBall;
+        }
+
+        public static Board getBoard()
+        {
+            return board;
+        }
+
+        public static void setBoard(Board newboard)
+        {
+            board = newboard;
         }
 
         public static int[] getScores()
