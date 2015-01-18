@@ -79,10 +79,12 @@
     <Compile Include="Back End\GameInfo.cs" />
     <Compile Include="Back End\Paddle.cs" />
     <Compile Include="Front End\Managers\InputManager.cs" />
-    <Compile Include="Front End\MenuItem.cs" />
+    <Compile Include="Front End\Menu\MenuItem.cs" />
     <Compile Include="Front End\Managers\ScreenManager.cs" />
     <Compile Include="Front End\Screens\ErrorScreen.cs" />
     <Compile Include="Front End\Screens\GameScreen.cs" />
+    <Compile Include="Front End\Menu\ListMenuItem.cs" />
+    <Compile Include="Front End\Screens\OptionsScreen.cs" />
     <Compile Include="Front End\Screens\Screen.cs" />
     <Compile Include="Front End\Screens\MainMenuScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

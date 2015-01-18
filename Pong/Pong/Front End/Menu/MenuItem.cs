@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pong.Front_End {
+namespace Pong.Front_End.Menu {
 
     class MenuItem {
         private string text;
@@ -59,6 +59,18 @@ namespace Pong.Front_End {
                     bounds = Rectangle.Empty;
                 }
             }
+        }
+        public MenuItem(string text, float yPosition, SpriteFont font, Vector2 screenSize) {
+            if (font == null) {
+                throw new ArgumentNullException("Font cannot be null.");
+            }
+            Vector2 textSize = font.MeasureString(text);          
+            Vector2 textPosition = new Vector2(screenSize.X, (int)(screenSize.Y * (yPosition/screenSize.Y)));
+            this.position = textPosition - (textSize / 2);
+            this.text = text;
+            this.font = font;
+            selectedColor = Color.Gold;
+            unselectedColor = Color.White;
         }
 
         public MenuItem(string text, Vector2 position, SpriteFont font) {

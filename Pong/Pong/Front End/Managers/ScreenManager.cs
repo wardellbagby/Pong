@@ -40,7 +40,6 @@ namespace Pong.Front_End.Managers {
             Models = new Dictionary<string, Model>();
             Fonts = new Dictionary<string, SpriteFont>();
 
-            InputManager.Register(Keys.Escape, () => Exit());
             base.Initialize();
         }
         protected override void LoadContent() {
@@ -54,13 +53,14 @@ namespace Pong.Front_End.Managers {
             foreach (var screen in ScreenList) {
                 screen.UnloadAssets();
             }
+            RemoveFont("Default");
             Textures2D.Clear();
             Textures3D.Clear();
             Fonts.Clear();
             Models.Clear();
             ScreenList.Clear();
             Content.Unload();
-            RemoveFont("Default");
+
         }
         protected override void Update(GameTime gameTime) {
             InputManager.Update(Keyboard.GetState(), Mouse.GetState());
