@@ -12,6 +12,13 @@ namespace Pong.Back_End
         private static int width;
         private static int height;
 
+        // Constructor
+        public Paddle(int newWidth, int newHeight)
+        {
+            width = newWidth;
+            height = newHeight;
+        }
+
         // Methods
         public int getSpeed() 
         {
