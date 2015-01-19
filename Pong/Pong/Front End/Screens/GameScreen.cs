@@ -20,7 +20,7 @@ namespace Pong.Front_End.Screens
             BackgroundColor = Color.Black;
             // TODO this paddle info is just for testing
             Paddle paddle = new Paddle(10, 40);
-            Info.setPaddles(new Paddle[] { paddle });
+            Info.setPaddles(new Paddle[] { paddle, paddle });
         }
 
         public override void Update(GameTime gameTime)
@@ -57,12 +57,29 @@ namespace Pong.Front_End.Screens
             Paddle[] paddles = Info.getPaddles();
             GraphicsDevice graphicsDevice = ScreenManager.GraphicsDeviceManager.GraphicsDevice;
 
+            int numberOfPaddles = 0;
+
             // Loop through the paddles and draw them
             foreach (Paddle paddle in paddles)
             {
+                numberOfPaddles++;
+
                 int paddleWidth = paddle.getWidth();
+                if (paddleWidth <= 0)
+                {
+                    continue;
+                }
+
                 int paddleHeight = paddle.getHeight();
+                if (paddleHeight <= 0)
+                {
+                    continue;
+                }
+
+                // TODO need to figure out how to tie a name to this Texture2D so that we can reference it in the Update function.
                 Texture2D rectangleTexture = new Texture2D(graphicsDevice, paddleWidth, paddleHeight);
+                
+                // The following "data" stuff confuses me since the color doesn't actually show up, but if we don't do this then the rectangle won't show up.
                 Color[] data = new Color[paddleWidth * paddleHeight];
                 for (int i = 0; i < data.Length; ++i)
                 {
@@ -70,7 +87,15 @@ namespace Pong.Front_End.Screens
                 }
                 rectangleTexture.SetData(data);
 
-                ScreenManager.Sprites.Draw(rectangleTexture, new Rectangle(0, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Crimson);
+                // Need to place the paddles on opposite sides of the game board
+                if (numberOfPaddles % 2 == 1)
+                {
+                    ScreenManager.Sprites.Draw(rectangleTexture, new Rectangle(0, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Crimson);
+                }
+                else
+                {
+                    ScreenManager.Sprites.Draw(rectangleTexture, new Rectangle(Info.gameWidth - paddleWidth, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Gray);
+                }
             }
 
             ScreenManager.Sprites.End();
