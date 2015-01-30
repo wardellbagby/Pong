@@ -14,7 +14,10 @@ namespace Pong.Front_End.Screens
 {
     class GameScreen : Screen
     {
+        private int maxX;
+        private int maxY;
         private int paddleWidth;
+        private int paddleHeight;
         private Texture2D ballTexture;
         private Vector2 playerPosition;
         private Vector2 enemyPosition;
@@ -24,13 +27,17 @@ namespace Pong.Front_End.Screens
         public override void LoadAssets()
         {
             BackgroundColor = Color.Black;
+            maxX = ScreenManager.GraphicsDeviceManager.GraphicsDevice.Viewport.Width;
+            maxY = ScreenManager.GraphicsDeviceManager.GraphicsDevice.Viewport.Height;
+
             // TODO this paddle info is just for testing
             paddleWidth = 10;
-            Paddle paddle = new Paddle(paddleWidth, 40);
+            paddleHeight = 40;
+            Paddle paddle = new Paddle(paddleWidth, paddleHeight);
             Info.setPaddles(new Paddle[] { paddle, paddle });
 
-            // Set the coordinates to draw the ball at
-            ballPosition = Vector2.Zero;
+            // Set the coordinates to draw the ball at the center of the screen
+            ballPosition = new Vector2(maxX / 2, maxY / 2);
             // Set the ball's speed
             ballSpeed = new Vector2(50.0f, 50.0f);
 
@@ -71,6 +78,62 @@ namespace Pong.Front_End.Screens
             // TODO need to create a target position for the opponent's paddle to randomly move
             Vector2 enemyStartPosition = new Vector2(Info.gameWidth - paddleWidth, Info.gameHeight / 2);
             enemyPosition = Vector2.Lerp(enemyPosition, enemyStartPosition, 0.01f);
+
+            int paddleMaxX = maxX - paddleWidth;
+            int paddleMaxY = maxY - paddleHeight;
+
+            // Keep the player paddle within the bounds of the screen
+            if (playerPosition.X > paddleMaxX)
+            {
+                playerPosition.X = paddleMaxX;
+            }
+            if (playerPosition.X < 0)
+            {
+                playerPosition.X = 0;
+            }
+            if (playerPosition.Y > paddleMaxY)
+            {
+                playerPosition.Y = paddleMaxY;
+            }
+            if (playerPosition.Y < 0)
+            {
+                playerPosition.Y = 0;
+            }
+
+            // // TODO maybe we should make the paddle change direction when reaching the bounds
+            // Keep the enemy paddle within the bounds of the screen
+            if (enemyPosition.X > paddleMaxX)
+            {
+                enemyPosition.X = paddleMaxX;
+            }
+            if (enemyPosition.X < 0)
+            {
+                enemyPosition.X = 0;
+            }
+            if (enemyPosition.Y > paddleMaxY)
+            {
+                enemyPosition.Y = paddleMaxY;
+            }
+            if (enemyPosition.Y < 0)
+            {
+                enemyPosition.Y = 0;
+            }
+
+            // If the ball passes either wall, reset its position
+            if (ballPosition.X > maxX || ballPosition.X < 0)
+            {
+                ballPosition = new Vector2(maxX / 2, maxY / 2);
+            }
+
+            // Keep the ball within the Y-bounds
+            if (ballPosition.Y > maxY)
+            {
+                // Make the ball bounce off the ceiling
+            }
+            if (ballPosition.Y < 0)
+            {
+                // Make the ball bounce off the floor
+            }
         }
 
         public override void Draw(GameTime gameTime)
