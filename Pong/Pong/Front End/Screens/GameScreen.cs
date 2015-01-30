@@ -1,5 +1,6 @@
 ﻿using Info = Pong.Back_End.GameInfo;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pong.Back_End;
@@ -13,9 +14,12 @@ namespace Pong.Front_End.Screens
 {
     class GameScreen : Screen
     {
+        private int paddleWidth;
+        private Texture2D ballTexture;
         private Vector2 playerPosition;
         private Vector2 enemyPosition;
-        private int paddleWidth;
+        private Vector2 ballPosition;
+        private Vector2 ballSpeed;
 
         public override void LoadAssets()
         {
@@ -24,6 +28,14 @@ namespace Pong.Front_End.Screens
             paddleWidth = 10;
             Paddle paddle = new Paddle(paddleWidth, 40);
             Info.setPaddles(new Paddle[] { paddle, paddle });
+
+            // Set the coordinates to draw the ball at
+            ballPosition = Vector2.Zero;
+            // Set the ball's speed
+            ballSpeed = new Vector2(50.0f, 50.0f);
+
+            // Load the ball sprite
+            ballTexture = ScreenManager.ContentManager.Load<Texture2D>("ball");
         }
 
         public override void Update(GameTime gameTime)
@@ -106,12 +118,18 @@ namespace Pong.Front_End.Screens
                 {
                     ScreenManager.Sprites.Draw(rectangleTexture, new Rectangle(Info.gameWidth - paddleWidth, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Gray);
                 }
-
-                // TODO need to draw the ball. It'll be easiest to just save a ball picture and draw it as a sprite.
             }
+
+            // Draw the ball
+            ScreenManager.Sprites.Draw(ballTexture, ballPosition, Color.White);
 
             ScreenManager.Sprites.End();
         }
-        public override void UnloadAssets() { }
+
+        public override void UnloadAssets()
+        {
+            // Unload the content
+            ScreenManager.ContentManager.Unload();
+        }
     }
 }
