@@ -42,7 +42,7 @@ namespace Pong.Back_End
             }
         }
 
-        //i couldnt figure out how to pass by reference so i did this instead, crappy i know. sorry
+        // when passing by ref it slows the code down a lot, did this instead
         public static Vector2 getNextPoint(Vector2 origin)
         {
             //this needs smoothing

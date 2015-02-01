@@ -111,11 +111,25 @@ namespace Pong.Front_End.Screens
             // TODO need to create a target position for the opponent's paddle to randomly move
 
             // Keep the paddles within the bounds of the screen
-            checkBounds(playerPosition);
-            checkBounds(enemyPosition);
+            if (playerPosition.Y + paddleHeight > maxY)
+            {
+                playerPosition.Y = paddleMaxY;
+            }
+            if (playerPosition.Y < 0)
+            {
+                playerPosition.Y = 0;
+            }
+            if (enemyPosition.Y + paddleHeight > maxY)
+            {
+                enemyPosition.Y = paddleMaxY;
+            }
+            if (enemyPosition.Y < 0)
+            {
+                enemyPosition.Y = 0;
+            }
 
             //collsion / X-Bounds detection
-            if (Ball.position.X <= paddleWidth && Ball.position.X + ballTexture.Width >= maxX - paddleWidth)
+            if (Ball.position.X <= paddleWidth || Ball.position.X + ballTexture.Width >= maxX - paddleWidth)
             {
                 if( (playerPosition.Y <= Ball.position.Y && playerPosition.Y + paddleHeight >= Ball.position.Y )  // player paddle
                     || 
@@ -143,17 +157,6 @@ namespace Pong.Front_End.Screens
         }
 
         //checks paddle bounds
-        public void checkBounds(Vector2 paddle)
-        {
-            if (paddle.Y > paddleMaxY)
-            {
-                paddle.Y = paddleMaxY;
-            }
-            if (paddle.Y < 0)
-            {
-                paddle.Y = 0;
-            }
-        }
 
 
         public override void Draw(GameTime gameTime)
