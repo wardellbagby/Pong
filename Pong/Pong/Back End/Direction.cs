@@ -9,15 +9,14 @@ namespace Pong.Back_End
     public sealed class Direction
     {
         static double degree; //direction
-        static int speed = 10;
-        static int xWait=0, yWait=0;
+        static float speed = 5;
         /*
          * This class wil be a bit interesting, 
          * it will (obvious) keep the direction of the ball
          * or( if called) randomize the direction on start
          * 
          * Randomizing will set it in a random direction between 20-50 degrees up or down, left or right.
-         * This will make it harder for someone to cheat the game because the game will not be static         * 
+         * This will make it harder for someone to cheat the game because the game will not be static         
          */
         public static void randomize()
         {
@@ -43,10 +42,12 @@ namespace Pong.Back_End
             }
         }
 
+        //i couldnt figure out how to pass by reference so i did this instead, crappy i know. sorry
         public static Vector2 getNextPoint(Vector2 origin)
         {
-            float newX = origin.X + (speed * (float)Math.Cos(DegreeToRadian(degree)));
-            float newY = origin.Y + -1*(speed * (float)Math.Sin(DegreeToRadian(degree)));
+            //this needs smoothing
+            float newX = origin.X +      (speed * (float)Math.Cos(DegreeToRadian(degree)));
+            float newY = origin.Y + -1 * (speed * (float)Math.Sin(DegreeToRadian(degree)));
             return new Vector2(newX, newY);
         }
 
@@ -71,7 +72,7 @@ namespace Pong.Back_End
             speed += 1;
         }
 
-        private static void resetSpeed()
+        public static void resetSpeed()
         {
             speed = 10;
         }

@@ -21,11 +21,11 @@ namespace Pong.Front_End.Screens
         private Texture2D ballTexture;
         private Vector2 playerPosition;
         private Vector2 enemyPosition;
-        private Vector2 ballPosition;
-        private Vector2 ballSpeed;
-        private readonly Vector2 startSpeed = new Vector2(50.0f, 50.0f);
-        private readonly Vector2 noSpeed = new Vector2(0.0f, 0.0f);
+        private readonly int startSpeed = 10;
+        private readonly int noSpeed = 0;
         private int oldMouseY=0;
+        private Vector2 enemyStartPosition;
+        int paddleMaxY;
 
         public override void LoadAssets()
         {
@@ -40,25 +40,35 @@ namespace Pong.Front_End.Screens
             Info.setPaddles(new Paddle[] { paddle, paddle });
 
             // Set the coordinates to draw the ball at the center of the screen
-            ballPosition = new Vector2(maxX / 2, maxY / 2);
+            Ball.position = new Vector2(maxX / 2, maxY / 2);
 
             // Load the ball sprite
             ballTexture = ScreenManager.ContentManager.Load<Texture2D>("ball");
+
+
+            // starting paddle locations
+            Vector2 playerStartPosition = new Vector2(0, Info.gameHeight / 2);
+            enemyStartPosition = new Vector2(Info.gameWidth - paddleWidth, Info.gameHeight / 2);
+
+            // paddle positions
+            playerPosition = Vector2.Lerp(playerPosition, playerStartPosition, 0.00f);
+            enemyPosition = Vector2.Lerp(enemyStartPosition, enemyStartPosition, 0.00f);
+
+            // get paddle bounds
+            paddleMaxY = maxY - paddleHeight;
         }
 
         public override void Update(GameTime gameTime)
         {
+            //TODO:  when the ball, and the paddles are moving, they begin to skip a little on screen, aka the transitions are not smooth at all, needs a fix
+
             //Exit
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 Environment.Exit(0);
             }
 
-            // This vector is where we want the left paddle to start
-            Vector2 playerStartPosition = new Vector2(0, Info.gameHeight / 2);
-
-            // This position is the one we want the player to control
-            playerPosition = Vector2.Lerp(playerPosition, playerStartPosition, 0.00f);
+            // keyboard detection
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
                 playerPosition.Y += 10;
@@ -67,6 +77,8 @@ namespace Pong.Front_End.Screens
             {
                 playerPosition.Y -= 10;
             }
+
+            // mouse detection
             if (oldMouseY != Mouse.GetState().Y)
             {
                 //mouse control
@@ -74,90 +86,75 @@ namespace Pong.Front_End.Screens
                 oldMouseY = Mouse.GetState().Y;
             }
 
-            if(ballSpeed == noSpeed && Keyboard.GetState().IsKeyDown(Keys.Space))
+            // if ball is not moving, and the space key is pressed, begin moving ball in random direction
+            if(Ball.speed == noSpeed && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 Direction.randomize();
-                ballSpeed = startSpeed;
+                Ball.speed = startSpeed;
             }
-            else if(ballSpeed !=noSpeed)
+            else if (Ball.speed != noSpeed)
             {
-                ballPosition = Direction.getNextPoint(ballPosition);
-            }
+                Ball.updatePosition();
 
-            //not needed remove?
-            //if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            //{
-            //    playerPosition.X += 10;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            //{
-            //    playerPosition.X -= 10;
-            //}
+                //enemy "AI" - follows ball around screen
+                int dist = 10;
+                if (enemyPosition.Y > Ball.position.Y)
+                {
+                    enemyPosition.Y -= dist;
+                }
+                else if (enemyPosition.Y < Ball.position.Y)
+                {
+                    enemyPosition.Y += dist;
+                }
+            }
 
             // TODO need to create a target position for the opponent's paddle to randomly move
-            Vector2 enemyStartPosition = new Vector2(Info.gameWidth - paddleWidth, Info.gameHeight / 2);
-            enemyPosition = Vector2.Lerp(enemyPosition, enemyStartPosition, 0.01f);
 
-            int paddleMaxX = maxX - paddleWidth;
-            int paddleMaxY = maxY - paddleHeight;
+            // Keep the paddles within the bounds of the screen
+            checkBounds(playerPosition);
+            checkBounds(enemyPosition);
 
-            // Keep the player paddle within the bounds of the screen
-            if (playerPosition.X > paddleMaxX)
+            //collsion / X-Bounds detection
+            if (Ball.position.X <= paddleWidth && Ball.position.X + ballTexture.Width >= maxX - paddleWidth)
             {
-                playerPosition.X = paddleMaxX;
-            }
-            if (playerPosition.X < 0)
-            {
-                playerPosition.X = 0;
-            }
-            if (playerPosition.Y > paddleMaxY)
-            {
-                playerPosition.Y = paddleMaxY;
-            }
-            if (playerPosition.Y < 0)
-            {
-                playerPosition.Y = 0;
-            }
+                if( (playerPosition.Y <= Ball.position.Y && playerPosition.Y + paddleHeight >= Ball.position.Y )  // player paddle
+                    || 
+                    (enemyPosition.Y <= Ball.position.Y && enemyPosition.Y + paddleHeight >= Ball.position.Y) // enemy paddle
+                  ) // paddle stopped ball
+                {
+                    Direction.changeX();
+                }
+                else // if point was scored
+                {
+                    //TODO: count score
+                    Ball.position = new Vector2(maxX / 2, maxY / 2);
+                    Ball.speed = noSpeed;
+                    Direction.resetSpeed();
+                    enemyPosition = Vector2.Lerp(enemyPosition, enemyStartPosition, 0.01f);
 
-            // // TODO maybe we should make the paddle change direction when reaching the bounds
-            // Keep the enemy paddle within the bounds of the screen
-            //Response : or......we could have it stop, maybe it needs to be up there?
-            if (enemyPosition.X > paddleMaxX)
-            {
-                enemyPosition.X = paddleMaxX;
-            }
-            if (enemyPosition.X < 0)
-            {
-                enemyPosition.X = 0;
-            }
-            if (enemyPosition.Y > paddleMaxY)
-            {
-                enemyPosition.Y = paddleMaxY;
-            }
-            if (enemyPosition.Y < 0)
-            {
-                enemyPosition.Y = 0;
-            }
-
-            // If the ball passes either wall, reset its position
-            if (ballPosition.X > maxX || ballPosition.X < 0)
-            {
-                //TODO count score
-                //ballPosition = new Vector2(maxX / 2, maxY / 2);
-                //ballSpeed = noSpeed;
-                //Direction.resetSpeed();
-
-                //this should be called if there is contact with a paddle
-                Direction.changeX();
+                }
             }
 
             // Keep the ball within the Y-bounds
-            if (ballPosition.Y >= maxY || ballPosition.Y <= 0)
+            if (Ball.position.Y >= maxY - ballTexture.Height || Ball.position.Y <= 0)
             {
-                // Make the ball bounce off the ceiling
                 Direction.changeY();
             }
         }
+
+        //checks paddle bounds
+        public void checkBounds(Vector2 paddle)
+        {
+            if (paddle.Y > paddleMaxY)
+            {
+                paddle.Y = paddleMaxY;
+            }
+            if (paddle.Y < 0)
+            {
+                paddle.Y = 0;
+            }
+        }
+
 
         public override void Draw(GameTime gameTime)
         {
@@ -203,12 +200,12 @@ namespace Pong.Front_End.Screens
                 }
                 else
                 {
-                    ScreenManager.Sprites.Draw(rectangleTexture, new Rectangle(Info.gameWidth - paddleWidth, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Gray);
+                    ScreenManager.Sprites.Draw(rectangleTexture, enemyPosition, new Rectangle(Info.gameWidth - paddleWidth, Info.gameHeight / 2, paddleWidth, paddleHeight), Color.Gray);
                 }
             }
 
             // Draw the ball
-            ScreenManager.Sprites.Draw(ballTexture, ballPosition, Color.White);
+            ScreenManager.Sprites.Draw(ballTexture, Ball.position, Color.White);
 
             ScreenManager.Sprites.End();
         }

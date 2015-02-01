@@ -1,35 +1,27 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Pong.Back_End;
+using Pong.Front_End.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Pong.Back_End
 {
-    public class Ball
+    public sealed class Ball
     {
         // Ball stats
-        private static int size;
-        private int speed;
+        public static int size;
+        public static int speed;
+        public static Vector2 position;
 
-        // Methods
-        public int getSize()
+        public static void updatePosition()
         {
-            return size;
-        }
-
-        public void setSize(int newSize)
-        {
-            size = newSize;
-        }
-
-        public int getSpeed()
-        {
-            return speed;
-        }
-
-        public void setSpeed(int newSpeed)
-        {
-            this.speed = newSpeed;
+            position = Direction.getNextPoint(position);
         }
     }
 }
