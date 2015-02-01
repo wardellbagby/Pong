@@ -23,6 +23,9 @@ namespace Pong.Front_End.Screens
         private Vector2 enemyPosition;
         private Vector2 ballPosition;
         private Vector2 ballSpeed;
+        private readonly Vector2 startSpeed = new Vector2(50.0f, 50.0f);
+        private readonly Vector2 noSpeed = new Vector2(0.0f, 0.0f);
+        private int oldMouseY=0;
 
         public override void LoadAssets()
         {
@@ -31,15 +34,13 @@ namespace Pong.Front_End.Screens
             maxY = ScreenManager.GraphicsDeviceManager.GraphicsDevice.Viewport.Height;
 
             // TODO this paddle info is just for testing
-            paddleWidth = 10;
-            paddleHeight = 40;
+            paddleWidth = 20;
+            paddleHeight = maxY/4;
             Paddle paddle = new Paddle(paddleWidth, paddleHeight);
             Info.setPaddles(new Paddle[] { paddle, paddle });
 
             // Set the coordinates to draw the ball at the center of the screen
             ballPosition = new Vector2(maxX / 2, maxY / 2);
-            // Set the ball's speed
-            ballSpeed = new Vector2(50.0f, 50.0f);
 
             // Load the ball sprite
             ballTexture = ScreenManager.ContentManager.Load<Texture2D>("ball");
@@ -66,14 +67,32 @@ namespace Pong.Front_End.Screens
             {
                 playerPosition.Y -= 10;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (oldMouseY != Mouse.GetState().Y)
             {
-                playerPosition.X += 10;
+                //mouse control
+                playerPosition.Y = Mouse.GetState().Y;
+                oldMouseY = Mouse.GetState().Y;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+
+            if(ballSpeed == noSpeed && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                playerPosition.X -= 10;
+                Direction.randomize();
+                ballSpeed = startSpeed;
             }
+            else if(ballSpeed !=noSpeed)
+            {
+                ballPosition = Direction.getNextPoint(ballPosition);
+            }
+
+            //not needed remove?
+            //if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            //{
+            //    playerPosition.X += 10;
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            //{
+            //    playerPosition.X -= 10;
+            //}
 
             // TODO need to create a target position for the opponent's paddle to randomly move
             Vector2 enemyStartPosition = new Vector2(Info.gameWidth - paddleWidth, Info.gameHeight / 2);
@@ -102,6 +121,7 @@ namespace Pong.Front_End.Screens
 
             // // TODO maybe we should make the paddle change direction when reaching the bounds
             // Keep the enemy paddle within the bounds of the screen
+            //Response : or......we could have it stop, maybe it needs to be up there?
             if (enemyPosition.X > paddleMaxX)
             {
                 enemyPosition.X = paddleMaxX;
@@ -122,17 +142,20 @@ namespace Pong.Front_End.Screens
             // If the ball passes either wall, reset its position
             if (ballPosition.X > maxX || ballPosition.X < 0)
             {
-                ballPosition = new Vector2(maxX / 2, maxY / 2);
+                //TODO count score
+                //ballPosition = new Vector2(maxX / 2, maxY / 2);
+                //ballSpeed = noSpeed;
+                //Direction.resetSpeed();
+
+                //this should be called if there is contact with a paddle
+                Direction.changeX();
             }
 
             // Keep the ball within the Y-bounds
-            if (ballPosition.Y > maxY)
+            if (ballPosition.Y >= maxY || ballPosition.Y <= 0)
             {
                 // Make the ball bounce off the ceiling
-            }
-            if (ballPosition.Y < 0)
-            {
-                // Make the ball bounce off the floor
+                Direction.changeY();
             }
         }
 
@@ -147,6 +170,7 @@ namespace Pong.Front_End.Screens
             int numberOfPaddles = 0;
 
             // Loop through the paddles and draw them
+            //NOTE Matt this foreach loop makes me cry.....
             foreach (Paddle paddle in paddles)
             {
                 numberOfPaddles++;

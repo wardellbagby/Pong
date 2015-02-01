@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Back End\Ball.cs" />
     <Compile Include="Back End\Board.cs" />
+    <Compile Include="Back End\Direction.cs" />
     <Compile Include="Back End\GameInfo.cs" />
     <Compile Include="Back End\Paddle.cs" />
     <Compile Include="Front End\Managers\InputManager.cs" />
